@@ -10,9 +10,9 @@ $ npm install --save bbtree
 ## Usage
 
 ```js
-var bbtree = require('bbtree');
+let bbtree = require('bbtree');
 
-bbtree('Rainbow');
+let tree = bbtree.createTree();
 ```
 ## License
 
