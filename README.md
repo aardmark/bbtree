@@ -13,6 +13,12 @@ $ npm install --save bbtree
 let bbtree = require('bbtree');
 
 let tree = bbtree.createTree();
+
+tree.insert(key, [value]);
+tree.delete(key);
+tree.get(key);
+tree.traverseInOrder(callback(key, value));
+tree.count();
 ```
 ## License
 
