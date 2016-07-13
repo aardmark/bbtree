@@ -78,10 +78,10 @@ describe('tree', function () {
     });
     it('should return the number of nodes', function () {
       let tree = bbtree.createTree();
-      for (let ix = 0; ix < 100; ix++) {
+      for (let ix = 0; ix < 42; ix++) {
         tree.insert(ix);
       }
-      expect(tree.count()).to.equal(100);
+      expect(tree.count()).to.equal(42);
     });
   });
 
@@ -90,14 +90,14 @@ describe('tree', function () {
       let tree = bbtree.createTree();
       tree.delete(1);
       expect(tree.count()).to.equal(0);
-      [9,5,10,0,8,11,-1,1,2].forEach((key) => tree.insert(key));
+      [9, 5, 10, 0, 8, 11, -1, 1, 2].forEach((key) => tree.insert(key));
       let count = tree.count();
       tree.delete(42);
       expect(tree.count()).to.equal(count);
     });
     it('should delete the correct node', function () {
       let tree = bbtree.createTree();
-      let data = [9,5,10,0,8,11,-1,1,2];
+      let data = [9, 5, 10, 0, 8, 11, -1, 1, 2, 100, 101, 102, 103, 104, -45, -12, 1000, 99, -99];
       data.forEach((key) => tree.insert(key));
       let size = tree.count();
       data.forEach((key) => {
@@ -106,6 +106,12 @@ describe('tree', function () {
         expect(tree.count()).to.equal(--size);
       });
       expect(tree.count()).to.equal(0);
+      for (let ix = 0; ix < 42; ix++) {
+        tree.insert(ix);
+      }
+      for (let ix = 41; ix >= 0; ix--) {
+        tree.delete(ix);
+      }
     });
   });
 });
