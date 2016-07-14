@@ -1,4 +1,4 @@
-# bbtree [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Coverage Status](https://coveralls.io/repos/github/aardmark/bbtree/badge.svg?branch=master)](https://coveralls.io/github/aardmark/bbtree?branch=master)]
+# bbtree [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Coverage Status][coveralls-image]][coveralls-url]
 > Balanced Binary Tree
 
 ## Installation
@@ -31,3 +31,5 @@ Apache-2.0 © [Mark Smith]()
 [travis-url]: https://travis-ci.org/aardmark/bbtree
 [daviddm-image]: https://david-dm.org/aardmark/bbtree.svg?theme=shields.io
 [daviddm-url]: https://david-dm.org/aardmark/bbtree
+[coveralls-image]: https://coveralls.io/repos/github/aardmark/bbtree/badge.svg?branch=master
+[coveralls-url]: https://coveralls.io/github/aardmark/bbtree?branch=master
