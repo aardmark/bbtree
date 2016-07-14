@@ -1,4 +1,4 @@
-# bbtree [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] ![Coverage Status](https://coveralls.io/repos/github/aardmark/bbtree/badge.svg?branch=master)](https://coveralls.io/github/aardmark/bbtree?branch=master)
+# bbtree [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Coverage Status](https://coveralls.io/repos/github/aardmark/bbtree/badge.svg?branch=master)](https://coveralls.io/github/aardmark/bbtree?branch=master)]
 > Balanced Binary Tree
 
 ## Installation
