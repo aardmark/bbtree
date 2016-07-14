@@ -15,10 +15,8 @@ describe('tree', function () {
       let tree = bbtree.createTree();
       tree.insert(1, 'one');
       tree.insert(-1, 'minus one');
-      expect(tree.get(1).key).to.equal(1);
-      expect(tree.get(1).value).to.equal('one');
-      expect(tree.get(-1).key).to.equal(-1);
-      expect(tree.get(-1).value).to.equal('minus one');
+      expect(tree.get(1)).to.equal('one');
+      expect(tree.get(-1)).to.equal('minus one');
     });
     it('should not insert a duplicate key', function () {
       let tree = bbtree.createTree();
@@ -29,8 +27,7 @@ describe('tree', function () {
       tree.insert(5, 'five');
       tree.insert(2, 'two');
       expect(tree.count()).to.equal(5);
-      let existing = tree.get(1);
-      expect(existing.value).to.equal('one');
+      expect(tree.get(1)).to.equal('one');
     });
   });
 
@@ -53,9 +50,20 @@ describe('tree', function () {
       data.forEach((value) => tree.insert(value, 'number ' + value));
       for (let ix = 0; ix < data.length; ix++) {
         let result = tree.get(data[ix]);
-        expect(result.key).to.equal(data[ix]);
-        expect(result.value).to.equal('number ' + data[ix]);
+        expect(result).to.equal('number ' + data[ix]);
       }
+    });
+  });
+
+  describe('#traversePreOrder()', function () {
+    it('should traverse the tree in pre order', function () {
+      let tree = bbtree.createTree();
+      let data = [0, 1, 2, 3, 4];
+      let preOrderedData = [1, 0, 3, 2, 4];
+      data.forEach((value) => tree.insert(value));
+      let preOrder = [];
+      tree.traversePreOrder((key) => { preOrder.push(key); });
+      expect(preOrder).to.deep.equal(preOrderedData);
     });
   });
 
@@ -68,6 +76,18 @@ describe('tree', function () {
       tree.traverseInOrder((key) => { inOrder.push(key); });
       let sortedData = data.sort((a, b) => { return a - b; });
       expect(inOrder).to.deep.equal(sortedData);
+    });
+  });
+
+  describe('#traversePostOrder()', function () {
+    it('should traverse the tree in post order', function () {
+      let tree = bbtree.createTree();
+      let data = [0, 1, 2, 3, 4];
+      let postOrderedData = [0, 2, 4, 3, 1];
+      data.forEach((value) => tree.insert(value));
+      let postOrder = [];
+      tree.traversePostOrder((key) => { postOrder.push(key); });
+      expect(postOrder).to.deep.equal(postOrderedData);
     });
   });
 
@@ -112,6 +132,7 @@ describe('tree', function () {
       for (let ix = 41; ix >= 0; ix--) {
         tree.delete(ix);
       }
+      expect(tree.count()).to.equal(0);
     });
   });
 });
