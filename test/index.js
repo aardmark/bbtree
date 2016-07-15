@@ -44,7 +44,7 @@ describe('tree', function () {
       let result = tree.get(1);
       expect(result).to.be.a('null');
     });
-    it('should return a key value pair for a key that does exist', function () {
+    it('should return the value for a key that does exist', function () {
       let tree = bbtree.createTree();
       let data = [50, 40, 30, 20, 10, 25];
       data.forEach((value) => tree.insert(value, 'number ' + value));
@@ -91,6 +91,33 @@ describe('tree', function () {
     });
   });
 
+  describe('#find()', function () {
+    it('should return an empty array for an empty tree', function () {
+      let tree = bbtree.createTree();
+      expect(tree.find('foo')).to.deep.equal([]);
+    });
+    it('should find a value', function () {
+      let tree = bbtree.createTree();
+      for (let ix = 0; ix < 10; ix++) {
+        tree.insert(ix, 'number ' + ix);
+      }
+      let result = tree.find('number 5');
+      expect(result.length).to.equal(1);
+      expect(result[0]).to.deep.equal({ key: 5, value: 'number 5' });
+    });
+    it('should find multiple values', function () {
+      let tree = bbtree.createTree();
+      for (let ix = 0; ix < 10; ix++) {
+        tree.insert(ix, 'number ' + ix);
+      }
+      tree.insert(10, 'number 5');
+      let result = tree.find('number 5');
+      expect(result.length).to.equal(2);
+      expect(result[0]).to.deep.equal({ key: 5, value: 'number 5' });
+      expect(result[1]).to.deep.equal({ key: 10, value: 'number 5' });
+    });
+  });
+
   describe('#count()', function () {
     it('should return zero for an empty tree', function () {
       let tree = bbtree.createTree();
@@ -100,8 +127,8 @@ describe('tree', function () {
       let tree = bbtree.createTree();
       for (let ix = 0; ix < 42; ix++) {
         tree.insert(ix);
+        expect(tree.count()).to.equal(ix + 1);
       }
-      expect(tree.count()).to.equal(42);
     });
   });
 

@@ -17,7 +17,10 @@ let tree = bbtree.createTree();
 tree.insert(key, [value]);
 tree.delete(key);
 tree.get(key);
+tree.find(value);
+tree.traversePreOrder(callback(key, value));
 tree.traverseInOrder(callback(key, value));
+tree.traversePostOrder(callback(key, value));
 tree.count();
 ```
 ## License
