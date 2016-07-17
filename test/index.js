@@ -13,21 +13,21 @@ describe('tree', function () {
   describe('#insert()', function () {
     it('should insert a key value pair', function () {
       let tree = bbtree.createTree();
-      tree.insert(1, 'one');
-      tree.insert(-1, 'minus one');
-      expect(tree.get(1)).to.equal('one');
-      expect(tree.get(-1)).to.equal('minus one');
+      tree.insert(1);
+      tree.insert(-1);
+      expect(tree.get(1)).to.equal(1);
+      expect(tree.get(-1)).to.equal(-1);
     });
     it('should not insert a duplicate key', function () {
       let tree = bbtree.createTree();
-      tree.insert(1, 'one');
-      tree.insert(10, 'ten');
-      tree.insert(1, 'another one');
-      tree.insert(9, 'nine');
-      tree.insert(5, 'five');
-      tree.insert(2, 'two');
+      tree.insert(1);
+      tree.insert(10);
+      tree.insert(1);
+      tree.insert(9);
+      tree.insert(5);
+      tree.insert(2);
       expect(tree.count()).to.equal(5);
-      expect(tree.get(1)).to.equal('one');
+      expect(tree.get(1)).to.equal(1);
     });
   });
 
@@ -47,10 +47,10 @@ describe('tree', function () {
     it('should return the value for a key that does exist', function () {
       let tree = bbtree.createTree();
       let data = [50, 40, 30, 20, 10, 25];
-      data.forEach((value) => tree.insert(value, 'number ' + value));
+      data.forEach((value) => tree.insert(value));
       for (let ix = 0; ix < data.length; ix++) {
         let result = tree.get(data[ix]);
-        expect(result).to.equal('number ' + data[ix]);
+        expect(result).to.equal(data[ix]);
       }
     });
   });
@@ -62,7 +62,7 @@ describe('tree', function () {
       let preOrderedData = [1, 0, 3, 2, 4];
       data.forEach((value) => tree.insert(value));
       let preOrder = [];
-      tree.traversePreOrder((key) => { preOrder.push(key); });
+      tree.traversePreOrder((value) => { preOrder.push(value); });
       expect(preOrder).to.deep.equal(preOrderedData);
     });
   });
@@ -73,7 +73,7 @@ describe('tree', function () {
       let data = [50, 40, 30, 20, 10, 25];
       data.forEach((value) => tree.insert(value));
       let inOrder = [];
-      tree.traverseInOrder((key) => { inOrder.push(key); });
+      tree.traverseInOrder((value) => { inOrder.push(value); });
       let sortedData = data.sort((a, b) => { return a - b; });
       expect(inOrder).to.deep.equal(sortedData);
     });
@@ -86,35 +86,8 @@ describe('tree', function () {
       let postOrderedData = [0, 2, 4, 3, 1];
       data.forEach((value) => tree.insert(value));
       let postOrder = [];
-      tree.traversePostOrder((key) => { postOrder.push(key); });
+      tree.traversePostOrder((value) => { postOrder.push(value); });
       expect(postOrder).to.deep.equal(postOrderedData);
-    });
-  });
-
-  describe('#find()', function () {
-    it('should return an empty array for an empty tree', function () {
-      let tree = bbtree.createTree();
-      expect(tree.find('foo')).to.deep.equal([]);
-    });
-    it('should find a value', function () {
-      let tree = bbtree.createTree();
-      for (let ix = 0; ix < 10; ix++) {
-        tree.insert(ix, 'number ' + ix);
-      }
-      let result = tree.find('number 5');
-      expect(result.length).to.equal(1);
-      expect(result[0]).to.deep.equal({ key: 5, value: 'number 5' });
-    });
-    it('should find multiple values', function () {
-      let tree = bbtree.createTree();
-      for (let ix = 0; ix < 10; ix++) {
-        tree.insert(ix, 'number ' + ix);
-      }
-      tree.insert(10, 'number 5');
-      let result = tree.find('number 5');
-      expect(result.length).to.equal(2);
-      expect(result[0]).to.deep.equal({ key: 5, value: 'number 5' });
-      expect(result[1]).to.deep.equal({ key: 10, value: 'number 5' });
     });
   });
 
@@ -137,7 +110,7 @@ describe('tree', function () {
       let tree = bbtree.createTree();
       tree.delete(1);
       expect(tree.count()).to.equal(0);
-      [9, 5, 10, 0, 8, 11, -1, 1, 2].forEach((key) => tree.insert(key));
+      [9, 5, 10, 0, 8, 11, -1, 1, 2].forEach((value) => tree.insert(value));
       let count = tree.count();
       tree.delete(42);
       expect(tree.count()).to.equal(count);
@@ -145,11 +118,11 @@ describe('tree', function () {
     it('should delete the correct node', function () {
       let tree = bbtree.createTree();
       let data = [9, 5, 10, 0, 8, 11, -1, 1, 2, 100, 101, 102, 103, 104, -45, -12, 1000, 99, -99];
-      data.forEach((key) => tree.insert(key));
+      data.forEach((value) => tree.insert(value));
       let size = tree.count();
-      data.forEach((key) => {
-        tree.delete(key);
-        expect(tree.get(key)).to.be.a('null');
+      data.forEach((value) => {
+        tree.delete(value);
+        expect(tree.get(value)).to.be.a('null');
         expect(tree.count()).to.equal(--size);
       });
       expect(tree.count()).to.equal(0);
