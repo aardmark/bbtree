@@ -1,14 +1,14 @@
 {
     "members": [
         {
-            "accountNumber": 10900,
-            "firstName": "Sideshow",
-            "lastName": "Bob"
-        },
-        {
             "accountNumber": 10500,
             "firstName": "Homer",
             "lastName": "Simpson"
+        },
+        {
+            "accountNumber": 10100,
+            "firstName": "Barney",
+            "lastName": "Gumble"
         },
         {
             "accountNumber": 10000,
@@ -16,9 +16,19 @@
             "lastName": "Simpson"
         },
         {
+            "accountNumber": 10300,
+            "firstName": "Nelson",
+            "lastName": "Muntz"
+        },
+        {
             "accountNumber": 10200,
             "firstName": "Kent",
             "lastName": "Brockman"
+        },
+        {
+            "accountNumber": 10400,
+            "firstName": "Marge",
+            "lastName": "Simpson"
         },
         {
             "accountNumber": 10700,
@@ -31,24 +41,14 @@
             "lastName": "Flanders"
         },
         {
-            "accountNumber": 10100,
-            "firstName": "Barney",
-            "lastName": "Gumble"
+            "accountNumber": 10900,
+            "firstName": "Sideshow",
+            "lastName": "Bob"
         },
         {
             "accountNumber": 10800,
             "firstName": "Lionel",
             "lastName": "Hutz"
-        },
-        {
-            "accountNumber": 10400,
-            "firstName": "Marge",
-            "lastName": "Simpson"
-        },
-        {
-            "accountNumber": 10300,
-            "firstName": "Nelson",
-            "lastName": "Muntz"
         },
         {
             "accountNumber": 11000,
