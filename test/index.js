@@ -39,6 +39,12 @@ describe('Tree', function () {
 
     it('should insert values', function () {
       validateTree();
+      tree = bbtree.createTree();
+      let data = [9, 5, 10, 0, 8, 11, -1, 1, 2, 100, 101, 102, 103, 104, -45, -12, 1000, 99, -99];
+      data.forEach((value) => tree.insert(value));
+      data.forEach((value) => {
+        expect(tree.get(value)).to.equal(value);
+      });
     });
 
     it('should not insert a duplicate value', function () {
@@ -95,7 +101,7 @@ describe('Tree', function () {
     it('should return zero for an empty tree', function () {
       expect(emptyTree.count()).to.equal(0);
     });
-    
+
     it('should return the number of nodes', function () {
       expect(tree.count()).to.equal(testData.length);
     });
@@ -103,30 +109,26 @@ describe('Tree', function () {
 
   describe('#delete()', function () {
     it('should not delete a non existant key', function () {
-      let tree = bbtree.createTree();
-      tree.delete(1);
-      expect(tree.count()).to.equal(0);
-      [9, 5, 10, 0, 8, 11, -1, 1, 2].forEach((value) => tree.insert(value));
-      let count = tree.count();
-      tree.delete(42);
-      expect(tree.count()).to.equal(count);
+      tree.delete(nonExistantKey);
+      expect(tree.count()).to.equal(testData.length);
     });
     it('should delete the correct node', function () {
-      let tree = bbtree.createTree();
-      let data = [9, 5, 10, 0, 8, 11, -1, 1, 2, 100, 101, 102, 103, 104, -45, -12, 1000, 99, -99];
-      data.forEach((value) => tree.insert(value));
       let size = tree.count();
-      data.forEach((value) => {
-        tree.delete(value);
-        expect(tree.get(value)).to.be.a('null');
+      testData.forEach((member) => {
+        let key = { accountNumber: member.accountNumber };
+        tree.delete(key);
+        expect(tree.get(key)).to.be.a('null');
         expect(tree.count()).to.equal(--size);
       });
       expect(tree.count()).to.equal(0);
-      for (let ix = 0; ix < 42; ix++) {
-        tree.insert(ix);
-      }
+
+      tree = bbtree.createTree();
+      [...Array(42).keys()].forEach(value => { tree.insert(value); });
+      size = tree.count();
       for (let ix = 41; ix >= 0; ix--) {
         tree.delete(ix);
+        expect(tree.get(ix)).to.be.a('null');
+        expect(tree.count()).to.equal(--size);
       }
       expect(tree.count()).to.equal(0);
     });
