@@ -107,18 +107,18 @@ describe('Tree', function () {
     });
   });
 
-  describe('#delete()', function () {
+  describe('#remove()', function () {
     
-    it('should not delete a non existant key', function () {
-      tree.delete(nonExistantKey);
+    it('should not remove a non existant key', function () {
+      tree.remove(nonExistantKey);
       expect(tree.count()).to.equal(testData.length);
     });
     
-    it('should delete the correct node', function () {
+    it('should remove the correct node', function () {
       let size = tree.count();
       testData.forEach((member) => {
         let key = { accountNumber: member.accountNumber };
-        tree.delete(key);
+        tree.remove(key);
         expect(tree.get(key)).to.be.a('null');
         expect(tree.count()).to.equal(--size);
       });
@@ -128,7 +128,7 @@ describe('Tree', function () {
       [...Array(42).keys()].forEach(value => { tree.insert(value); });
       size = tree.count();
       for (let ix = 41; ix >= 0; ix--) {
-        tree.delete(ix);
+        tree.remove(ix);
         expect(tree.get(ix)).to.be.a('null');
         expect(tree.count()).to.equal(--size);
       }
@@ -142,13 +142,14 @@ describe('Tree', function () {
     });
     it('should return the correct results', function () {
       let lastName = 'Simpson';
-      let results = tree.find((member) => { return member.lastName === lastName; });
+      let matcher = (member) => { return member.lastName === lastName; };
+      let results = tree.find(matcher);
       expect(results.length).to.equal(3);
       results.forEach((member) => {
         expect(member.lastName).to.equal(lastName);
       });
       lastName = 'Gumble';
-      results = tree.find((member) => { return member.lastName === lastName; });
+      results = tree.find(matcher);
       expect(results.length).to.equal(1);
       results.forEach((member) => {
         expect(member.lastName).to.equal(lastName);

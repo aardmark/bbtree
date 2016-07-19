@@ -13,7 +13,7 @@
   ],
   "main": "lib/index.js",
   "keywords": [
-    "self balancing binary tree node javascript"
+    "self balancing,avl,binary tree"
   ],
   "devDependencies": {
     "chai": "^3.5.0",
