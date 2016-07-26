@@ -26,7 +26,7 @@ describe('BbTree', function () {
 describe('Tree', function () {
   //let tree = null;
   //const emptyTree = bbtree.createTree();
-  //const nonExistantKey = { accountNumber: 42 };
+  const nonExistantKey = { accountNumber: 42 };
   /*
   let validateTree = () => {
     testData.forEach((member) => {
@@ -95,49 +95,59 @@ describe('Tree', function () {
     });
   });
 
+  describe('#get()', function () {
+
+    it('should not return a value for an empty tree', function () {
+      let tree = bbtree.createTree();
+      return expect(tree.get(nonExistantKey)).to.be.rejectedWith(bbtree.BbTreeError);
+    });
+
+    it('should not return a value for a key that does not exist', function () {
+      let tree = bbtree.createTree(comparer);
+      return populateTree(tree, testData)
+        .then(() => {
+          return expect(tree.get(nonExistantKey)).to.be.rejectedWith(bbtree.BbTreeError);
+        });
+    });
+
+    it('should return the value for a key that does exist', function () {
+      let tree = bbtree.createTree(comparer);
+      let accountToRetrieve = testData[7];
+      let key = { accountNumber: accountToRetrieve.accountNumber };
+      return populateTree(tree, testData)
+        .then(() => {
+          return expect(tree.get(key)).to.become(accountToRetrieve);
+        });
+    });
+  });
   /*
-    describe('#get()', function () {
-  
-      it('should return null for an empty tree', function () {
-        expect(emptyTree.get(nonExistantKey)).to.be.a('null');
-      });
-  
-      it('should return null for a key that does not exist', function () {
-        expect(tree.get(nonExistantKey)).to.be.a('null');
-      });
-  
-      it('should return the value for a key that does exist', function () {
-        validateTree();
-      });
+  describe('#traversePreOrder()', function () {
+ 
+    it('should traverse the tree in pre order', function () {
+      let preOrder = [];
+      tree.traversePreOrder((value) => { preOrder.push(value); });
+      expect(preOrder).to.deep.equal(preOrderedTestData);
     });
-  
-    describe('#traversePreOrder()', function () {
-  
-      it('should traverse the tree in pre order', function () {
-        let preOrder = [];
-        tree.traversePreOrder((value) => { preOrder.push(value); });
-        expect(preOrder).to.deep.equal(preOrderedTestData);
-      });
+  });
+ 
+  describe('#traverseInOrder()', function () {
+ 
+    it('should traverse the tree in order', function () {
+      let inOrder = [];
+      tree.traverseInOrder((value) => { inOrder.push(value); });
+      expect(inOrder).to.deep.equal(inOrderTestData);
     });
-  
-    describe('#traverseInOrder()', function () {
-  
-      it('should traverse the tree in order', function () {
-        let inOrder = [];
-        tree.traverseInOrder((value) => { inOrder.push(value); });
-        expect(inOrder).to.deep.equal(inOrderTestData);
-      });
+  });
+ 
+  describe('#traversePostOrder()', function () {
+ 
+    it('should traverse the tree in post order', function () {
+      let postOrder = [];
+      tree.traversePostOrder((value) => { postOrder.push(value); });
+      expect(postOrder).to.deep.equal(postOrderedTestData);
     });
-  
-    describe('#traversePostOrder()', function () {
-  
-      it('should traverse the tree in post order', function () {
-        let postOrder = [];
-        tree.traversePostOrder((value) => { postOrder.push(value); });
-        expect(postOrder).to.deep.equal(postOrderedTestData);
-      });
-    });
-  */
+  });
+*/
   describe('#count()', function () {
 
     it('should return zero for an empty tree', function () {
