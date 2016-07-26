@@ -5,6 +5,7 @@
     "node": "registry:dt/node#6.0.0+20160709114037"
   },
   "globalDependencies": {
+    "chai-as-promised": "registry:dt/chai-as-promised#0.0.0+20160423070304",
     "lodash": "registry:dt/lodash#3.10.0+20160619033623"
   }
 }
