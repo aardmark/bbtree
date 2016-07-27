@@ -4,9 +4,9 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const bbtree = require('../lib');
 const testData = require('./testdata.json').members;
-const preOrderedTestData = require('./preOrderedData.json').members;
-const inOrderTestData = require('./inOrderData.json').members;
-const postOrderedTestData = require('./postOrderedData.json').members;
+// const preOrderedTestData = require('./preOrderedData.json').members;
+// const inOrderTestData = require('./inOrderData.json').members;
+// const postOrderedTestData = require('./postOrderedData.json').members;
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
@@ -15,8 +15,6 @@ let comparer = (a, b) => {
   return a.accountNumber - b.accountNumber;
 };
 
-const C = console;
-
 describe('BbTree', function () {
   it('should export function createTree', function () {
     expect(bbtree).to.respondTo('createTree');
@@ -24,39 +22,15 @@ describe('BbTree', function () {
 });
 
 describe('Tree', function () {
-  //let tree = null;
-  //const emptyTree = bbtree.createTree();
   const nonExistantKey = { accountNumber: 42 };
-  /*
-  let validateTree = () => {
-    testData.forEach((member) => {
-      let result = tree.get({ accountNumber: member.accountNumber });
-      expect(result).to.eventually.equal(member);
-    });
-    expect(tree.count()).to.eventually.equal(testData.length);
-  };
-*/
+
   let populateTree = (tree, data) => {
     return Promise.all(
       data.map(function (member) {
         return tree.insert(member);
       }));
   };
-  /*
-    beforeEach('Populating tree', function () {
-      tree = bbtree.createTree(comparer);
-      Promise.all(
-  
-      );
-      testData.forEach((member) => {
-        tree.insert(member)
-          .then((insertedMember) => {
-            C.log(insertedMember);
-            expect(insertedMember.to.equal(member));
-          });
-      });
-    });
-  */
+
   describe('#insert()', function () {
     it('should insert values with the default comparer', function () {
       let tree = bbtree.createTree();
@@ -67,6 +41,16 @@ describe('Tree', function () {
     it('should insert values with a custom comparer', function () {
       let tree = bbtree.createTree(comparer);
       return expect(populateTree(tree, testData)).to.become(testData);
+    });
+
+    it('should not insert null', function () {
+      let tree = bbtree.createTree();
+      return expect(tree.insert(null)).to.be.rejectedWith(bbtree.BbTreeError);
+    });
+
+    it('should not insert an undefined value', function () {
+      let tree = bbtree.createTree();
+      return expect(tree.insert()).to.be.rejectedWith(bbtree.BbTreeError);
     });
 
     it('should not insert a duplicate value', function () {
@@ -92,6 +76,36 @@ describe('Tree', function () {
               return Promise.reject(`Original root ${originalRoot}. Tree root ${tree.root}`);
             });
         });
+    });
+  });
+
+  describe('#bulkInsert()', function () {
+    it('should insert values with the default comparer', function () {
+      let tree = bbtree.createTree();
+      let data = [9, 5, 10, 0, 8, 11, -1, 1, 2, 100, 101, 102, 103, 104, -45, -12, 1000, 99, -99];
+      return expect(tree.bulkInsert(data)).to.become(data);
+    });
+
+    it('should insert values with a custom comparer', function () {
+      let tree = bbtree.createTree(comparer);
+      return expect(tree.bulkInsert(testData)).to.become(testData);
+    });
+
+    it('should not accept a non-array', function () {
+      let tree = bbtree.createTree();
+      return expect(tree.bulkInsert('x')).to.be.rejectedWith(bbtree.BbTreeError);
+    });
+
+    it('should not insert duplicate or invalid values', function () {
+      let tree = bbtree.createTree();
+      let invalidData = [0, 1, 2, null, 3, 3, undefined, 4, 5];
+      let validData = [0, 1, 2, 3, 4, 5];
+      let countPromise = tree.bulkInsert(invalidData).then(() => { return tree.count(); });
+      let insertPromise = bbtree.createTree().bulkInsert(invalidData);
+      return Promise.all([
+        expect(countPromise).to.eventually.equal(validData.length),
+        expect(insertPromise).to.become(validData)
+      ]);
     });
   });
 
@@ -122,32 +136,32 @@ describe('Tree', function () {
   });
   /*
   describe('#traversePreOrder()', function () {
- 
+   
     it('should traverse the tree in pre order', function () {
       let preOrder = [];
       tree.traversePreOrder((value) => { preOrder.push(value); });
       expect(preOrder).to.deep.equal(preOrderedTestData);
     });
   });
- 
+   
   describe('#traverseInOrder()', function () {
- 
+   
     it('should traverse the tree in order', function () {
       let inOrder = [];
       tree.traverseInOrder((value) => { inOrder.push(value); });
       expect(inOrder).to.deep.equal(inOrderTestData);
     });
   });
- 
+   
   describe('#traversePostOrder()', function () {
- 
+   
     it('should traverse the tree in post order', function () {
       let postOrder = [];
       tree.traversePostOrder((value) => { postOrder.push(value); });
       expect(postOrder).to.deep.equal(postOrderedTestData);
     });
   });
-*/
+  */
   describe('#count()', function () {
 
     it('should return zero for an empty tree', function () {
