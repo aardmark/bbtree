@@ -86,12 +86,12 @@ describe('Tree', function () {
     it('should insert values with the default comparer', function () {
       let tree = createTree();
       let data = [9, 5, 10, 0, 8, 11, -1, 1, 2, 100, 101, 102, 103, 104, -45, -12, 1000, 99, -99];
-      return expect(tree.bulkInsert(data)).to.become(data);
+      return expect(tree.bulkInsert(data)).to.become([]);
     });
 
     it('should insert values with a custom comparer', function () {
       let tree = createTree(comparer);
-      return expect(tree.bulkInsert(testData)).to.become(testData);
+      return expect(tree.bulkInsert(testData)).to.become([]);
     });
 
     it('should not accept a non-array', function () {
@@ -103,11 +103,14 @@ describe('Tree', function () {
       let tree = createTree();
       let invalidData = [0, 1, 2, null, 3, 3, undefined, 4, 5];
       let validData = [0, 1, 2, 3, 4, 5];
+      let rejectedValues = [null, 3, undefined];
       let countPromise = tree.bulkInsert(invalidData).then(() => { return tree.count(); });
       let insertPromise = createTree().bulkInsert(invalidData);
       return Promise.all([
         expect(countPromise).to.eventually.equal(validData.length),
-        expect(insertPromise).to.become(validData)
+        expect(insertPromise
+          .then(rejectedValues => { return rejectedValues.map(rejectedValue => { return rejectedValue.value; }); }))
+          .to.become(rejectedValues)
       ]);
     });
   });
