@@ -2,13 +2,14 @@
 
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
+const _ = require('lodash');
 const bbtree = require('../lib');
 const testData = require('./testdata.json').members;
 const createTree = bbtree.createTree;
 const BbTreeError = bbtree.BbTreeError;
-// const preOrderedTestData = require('./preOrderedData.json').members;
-// const inOrderTestData = require('./inOrderData.json').members;
-// const postOrderedTestData = require('./postOrderedData.json').members;
+const preOrderedTestData = require('./preOrderedData.json').members;
+const inOrderTestData = require('./inOrderData.json').members;
+const postOrderedTestData = require('./postOrderedData.json').members;
 
 //let C = console;
 //C = { log: () => { return; } };
@@ -55,12 +56,12 @@ describe('Tree', function () {
     it('should insert values with the default comparer', function () {
       let tree = createTree();
       let data = [9, 5, 10, 0, 8, 11, -1, 1, 2, 100, 101, 102, 103, 104, -45, -12, 1000, 99, -99];
-      return expect(populateTree(tree, data)).to.become(tree);
+      return expect(populateTree(tree, data)).to.eventually.equal(tree);
     });
 
     it('should insert values with a custom comparer', function () {
       let tree = createTree(comparer);
-      return expect(populateTree(tree, testData)).to.become(tree);
+      return expect(populateTree(tree, testData)).to.eventually.equal(tree);
     });
 
     it('should not insert null', function () {
@@ -116,121 +117,172 @@ describe('Tree', function () {
   });
 
   describe('#get()', function () {
-
     it('should not return a value for an empty tree', function () {
-      let tree = createTree();
-      return expect(tree.get(nonExistantKey)).to.be.rejectedWith(bbtree.BbTreeError);
+      return expect(createTree().get(nonExistantKey)).to.be.rejectedWith(bbtree.BbTreeError);
     });
 
     it('should not return a value for a key that does not exist', function () {
-      let tree = createTree(comparer);
-      return populateTree(tree, testData)
-        .then(() => {
+      return populateTree(createTree(comparer), testData)
+        .then((tree) => {
           return expect(tree.get(nonExistantKey)).to.be.rejectedWith(bbtree.BbTreeError);
         });
     });
 
     it('should return the value for a key that does exist', function () {
-      let tree = createTree(comparer);
       let accountToRetrieve = testData[7];
       let key = { accountNumber: accountToRetrieve.accountNumber };
-      return populateTree(tree, testData)
-        .then(() => {
-          return expect(tree.get(key)).to.become(accountToRetrieve);
+      return populateTree(createTree(comparer), testData)
+        .then((tree) => {
+          return expect(tree.get(key)).to.eventually.equal(accountToRetrieve);
         });
     });
   });
-  /*
+
   describe('#traversePreOrder()', function () {
-   
     it('should traverse the tree in pre order', function () {
       let preOrder = [];
-      tree.traversePreOrder((value) => { preOrder.push(value); });
-      expect(preOrder).to.deep.equal(preOrderedTestData);
+      let promise = populateTree(createTree(comparer), testData)
+        .then((tree) => {
+          return tree.traversePreOrder((value) => { preOrder.push(value); });
+        })
+        .then(() => {
+          return Promise.resolve(_.isEqual(preOrder, preOrderedTestData));
+        });
+      return expect(promise).to.eventually.be.true;
+    });
+
+    it('should reject if there is an error in the callback', function () {
+      let promise = populateTree(createTree(comparer), testData)
+        .then((tree) => {
+          return tree.traversePreOrder(() => { throw new Error('cberror'); });
+        })
+        .then(() => {
+          return Promise.resolve();
+        });
+      return expect(promise).to.be.rejectedWith(Error, /cberror/);
     });
   });
-   
+
   describe('#traverseInOrder()', function () {
-   
     it('should traverse the tree in order', function () {
       let inOrder = [];
-      tree.traverseInOrder((value) => { inOrder.push(value); });
-      expect(inOrder).to.deep.equal(inOrderTestData);
+      let promise = populateTree(createTree(comparer), testData)
+        .then((tree) => {
+          return tree.traverseInOrder((value) => { inOrder.push(value); });
+        })
+        .then(() => {
+          return Promise.resolve(_.isEqual(inOrder, inOrderTestData));
+        });
+      return expect(promise).to.eventually.be.true;
+    });
+
+    it('should reject if there is an error in the callback', function () {
+      let promise = populateTree(createTree(comparer), testData)
+        .then((tree) => {
+          return tree.traverseInOrder(() => { throw new Error('cberror'); });
+        })
+        .then(() => {
+          return Promise.resolve();
+        });
+      return expect(promise).to.be.rejectedWith(Error, /cberror/);
     });
   });
-   
+
   describe('#traversePostOrder()', function () {
-   
     it('should traverse the tree in post order', function () {
       let postOrder = [];
-      tree.traversePostOrder((value) => { postOrder.push(value); });
-      expect(postOrder).to.deep.equal(postOrderedTestData);
+      let promise = populateTree(createTree(comparer), testData)
+        .then((tree) => {
+          return tree.traversePostOrder((value) => { postOrder.push(value); });
+        })
+        .then(() => {
+          return Promise.resolve(_.isEqual(postOrder, postOrderedTestData));
+        });
+      return expect(promise).to.eventually.be.true;
+    });
+
+    it('should reject if there is an error in the callback', function () {
+      let promise = populateTree(createTree(comparer), testData)
+        .then((tree) => {
+          return tree.traversePostOrder(() => { throw new Error('cberror'); });
+        })
+        .then(() => {
+          return Promise.resolve();
+        });
+      return expect(promise).to.be.rejectedWith(Error, /cberror/);
     });
   });
-  */
-  describe('#count()', function () {
 
+  describe('#count()', function () {
     it('should return zero for an empty tree', function () {
       return expect(createTree().count()).to.eventually.equal(0);
     });
 
     it('should return the number of values', function () {
-      let tree = createTree(comparer);
-      return populateTree(tree, testData)
-        .then(() => {
+      return populateTree(createTree(comparer), testData)
+        .then((tree) => {
           return expect(tree.count()).to.eventually.equal(testData.length);
         });
     });
   });
-  /*
-    describe('#remove()', function () {
-  
-      it('should not remove a non existant key', function () {
-        tree.remove(nonExistantKey);
-        expect(tree.count()).to.equal(testData.length);
-      });
-  
-      it('should remove the correct node', function () {
-        let size = tree.count();
-        testData.forEach((member) => {
-          let key = { accountNumber: member.accountNumber };
-          tree.remove(key);
-          expect(tree.get(key)).to.be.a('null');
-          expect(tree.count()).to.equal(--size);
-        });
-        expect(tree.count()).to.equal(0);
-  
-        tree = createTree();
-        [...Array(42).keys()].forEach(value => { tree.insert(value); });
-        size = tree.count();
-        for (let ix = 41; ix >= 0; ix--) {
-          tree.remove(ix);
-          expect(tree.get(ix)).to.be.a('null');
-          expect(tree.count()).to.equal(--size);
-        }
-        expect(tree.count()).to.equal(0);
-      });
+
+  describe('#remove()', function () {
+    it('should not remove a non existant key', function () {
+      let promise = populateTree(createTree(comparer), testData)
+        .then(tree => { return tree.remove(nonExistantKey); });
+      return expect(promise).to.be.rejectedWith(BbTreeError, /Value not found/);
     });
-  
-    describe('#find()', function () {
-      it('should return an empty array if no results are found', function () {
-        expect(tree.find((member) => { return member.lastName === 'foo'; }).length).to.equal(0);
+
+    it('should remove values with a custom comparer', function () {
+      let promise = Promise.resolve()
+        .then(() => { return populateTree(createTree(comparer), testData); });
+
+      testData.forEach((member) => {
+        let key = { accountNumber: member.accountNumber };
+        promise = promise.then(tree => { return tree.remove(key); });
       });
-      it('should return the correct results', function () {
-        let lastName = 'Simpson';
-        let matcher = (member) => { return member.lastName === lastName; };
-        let results = tree.find(matcher);
-        expect(results.length).to.equal(3);
-        results.forEach((member) => {
-          expect(member.lastName).to.equal(lastName);
-        });
-        lastName = 'Gumble';
-        results = tree.find(matcher);
-        expect(results.length).to.equal(1);
-        results.forEach((member) => {
-          expect(member.lastName).to.equal(lastName);
-        });
-      });
+      promise = promise.then(tree => { return tree.count(); });
+      return expect(promise).to.eventually.equal(0);
     });
-  */
+
+    it('should remove values with the default comparer', function () {
+      let promise = Promise.resolve()
+        .then(() => { return populateTree(createTree(), [...Array(42).keys()]); });
+      for (let ix = 41; ix >= 0; ix--) {
+        promise = promise.then(tree => { return tree.remove(ix); });
+      }
+      promise = promise.then(tree => { return tree.count(); });
+      return expect(promise).to.eventually.equal(0);
+    });
+  });
+
+
+  describe('#find()', function () {
+    it('should return an empty array if no results are found', function () {
+      let promise = populateTree(createTree(comparer), testData)
+        .then(tree => { return tree.find((member) => { return member.lastName === 'foo'; }); })
+        .then(results => { return _.isEqual(results, []); });
+      return expect(promise).to.eventually.be.true;
+    });
+    it('should return the correct results', function () {
+      let lastName = 'Simpson';
+      let matcher = (member) => { return member.lastName === lastName; };
+      let promise = populateTree(createTree(comparer), testData)
+        .then(tree => { return tree.find(matcher); })
+        .then(results => {
+          let ok = true;
+          results.forEach((member) => {
+            if (member.lastName !== lastName) ok = false;
+          });
+          return (!ok || results.length !== 3) ? false : true;
+        });
+      return expect(promise).to.eventually.be.true;
+    });
+    it('should reject if the matcher throws an error', function () {
+      let promise = populateTree(createTree(comparer), testData)
+        .then(tree => { return tree.find(() => { throw new Error('thrownerror'); }); })
+        .then(results => { return _.isEqual(results, []); });
+      return expect(promise).to.be.rejectedWith(Error, 'thrownerror');
+    });
+  });
 });
