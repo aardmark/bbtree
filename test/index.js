@@ -226,6 +226,34 @@ describe('Tree', function () {
     });
   });
 
+  describe('#inOrderValues', function () {
+    it('should not iterate for an empty tree', function () {
+      let promise = Promise.resolve(createTree())
+        .then(tree => {
+          let ret = [];
+          let sortedValues = tree.inOrderValues;
+          for (let value of sortedValues) {
+            ret.push(value);
+          }
+          return Promise.resolve(_.isEqual(ret, []));
+        });
+      return expect(promise).to.eventually.be.true;
+    });
+
+    it('should iterate in the correct order', function () {
+      let promise = populateTree(createTree(comparer), testData)
+        .then(tree => {
+          let ret = [];
+          let sortedValues = tree.inOrderValues;
+          for (let value of sortedValues) {
+            ret.push(value);
+          }
+          return Promise.resolve(_.isEqual(ret, inOrderTestData));
+        });
+      return expect(promise).to.eventually.be.true;
+    });
+  });
+
   describe('#remove()', function () {
     it('should not remove a non existant key', function () {
       let promise = populateTree(createTree(comparer), testData)
@@ -255,7 +283,6 @@ describe('Tree', function () {
       return expect(promise).to.eventually.equal(0);
     });
   });
-
 
   describe('#find()', function () {
     it('should return an empty array if no results are found', function () {
