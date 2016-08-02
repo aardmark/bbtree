@@ -11,9 +11,6 @@ const preOrderedTestData = require('./preOrderedData.json').members;
 const inOrderTestData = require('./inOrderData.json').members;
 const postOrderedTestData = require('./postOrderedData.json').members;
 
-//let C = console;
-//C = { log: () => { return; } };
-
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 

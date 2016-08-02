@@ -132,6 +132,37 @@ tree.insert(memberAccount)
     // no match found
   });;
 ```
+#### inOrderValues
+Gets an iterator for all the values in the tree in sorted order.
+```js
+let bbtree = require('bbtree');
+
+let comparer = (a, b) => {
+  return a.accountNumber - b.accountNumber;
+};
+
+let tree = bbtree.createTree(comparer);
+
+tree.insert({ accountNumber: 1, firstName: 'Fred', lastName: 'Flintstone' })
+  .then(tree => { return tree.insert({ accountNumber: 2, firstName: 'Wilma', lastName: 'Flintstone' })})
+  .then(tree => { return tree.insert({ accountNumber: 3, firstName: 'Barney', lastName: 'Rubble' })})
+  .then(tree => {
+    let ret = [];
+    let sortedValues = tree.inOrderValues;
+    for (let value of sortedValues) {
+      ret.push(value);
+    }
+    return ret;
+  })
+  .then(results => {
+    // results is [ { accountNumber: 1, firstName: 'Fred', lastName: 'Flintstone' },
+    //              { accountNumber: 2, firstName: 'Wilma', lastName: 'Flintstone' },
+    //              { accountNumber: 3, firstName: 'Barney', lastName: 'Rubble' } ]
+  })
+  .catch(err => {
+    // handle the error
+  });
+```
 #### insert(value)
 Inserts a value into the tree.  
 `value`: the value to insert.  
@@ -154,13 +185,10 @@ tree.insert(memberAccount)
     // insert was not successful
   });
 ```
-
-
-
-#### Removal
-
-The `remove(key)` method removes the value from the tree.
-
+#### remove(key)
+Removes a value from the tree.  
+`key`: the key used to determine which value to remove.  
+Returns a promise that resolves to the tree if the removal is successful or rejects if the key is not found.
 ```js
 let bbtree = require('bbtree');
 
@@ -171,15 +199,23 @@ let comparer = (a, b) => {
 let tree = bbtree.createTree(comparer);
 
 let memberAccount = { accountNumber: 42, firstName: 'Arthur', lastName: 'Dent' };
-tree.insert(memberAccount);
-
-let key = { accountNumber: 42 };
-
-tree.remove(key);
+tree.insert(memberAccount)
+  .then(tree => {
+    let key = { accountNumber: 42 };
+    return tree.remove(key);
+  })
+  .then(tree => {
+    // removal was successful
+  })
+  .catch(err => {
+    // not found or some other error
+  });
 ```
-#### Traversal
-
-The `traversePreOrder(callback(value))`, `traverseInOrder(callback(value))` and `traversePostOrder(callback(value))` methods allow for traversal of the tree.  
+#### traversePreOrder(callback(value))
+#### traverseInOrder(callback(value))
+#### traversePostOrder(callback(value))
+Traverses the tree in order calling the callback function with the value of the node.  
+`callback`: the callback that is called for each node.  
 Each one takes a callback function that is called with the value of each node as the tree is traversed. 
 ```js
 let bbtree = require('bbtree');
@@ -189,13 +225,19 @@ let comparer = (a, b) => {
 };
 
 let tree = bbtree.createTree(comparer);
-
-tree.insert({ accountNumber: 1, firstName: 'Fred', lastName: 'Flintstone' });
-tree.insert({ accountNumber: 2, firstName: 'Wilma', lastName: 'Flintstone' });
-tree.insert({ accountNumber: 3, firstName: 'Barney', lastName: 'Rubble' });
-
-let inOrder = [];
-tree.traverseInOrder((value) => { inOrder.push(value); });
+let firstNames = [];
+tree.insert({ accountNumber: 1, firstName: 'Fred', lastName: 'Flintstone' })
+  .then(tree => { return tree.insert({ accountNumber: 2, firstName: 'Wilma', lastName: 'Flintstone' }) })
+  .then(tree => { return tree.insert({ accountNumber: 3, firstName: 'Barney', lastName: 'Rubble' }) })
+  .then(tree => {
+    return tree.traverseInOrder(account => { firstNames.push(account.firstName); });
+  })
+  .then(() => {
+    // firstNames is [ 'Fred', 'Wilma', 'Barney' ]
+  })
+  .catch(err => {
+    // handle the error
+  });
 ```
 ## License
 
