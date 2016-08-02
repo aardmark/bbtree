@@ -14,7 +14,7 @@ $ npm install --save bbtree
 
 ### Instantiation
 
-The `createTree([comparer(a, b)])` method instantiates a new tree.  
+The `bbtree.createTree([comparer(a, b)])` method instantiates a new tree.  
 The tree will be ordered based on the comparer function.  
 If provided, the comparer **_must_** return:
 + a negative number if `a` is less than `b`
@@ -42,21 +42,74 @@ If no comparer is provided then the following is used to determine order:
     return 0;
 }
 ```
-### Methods
+### API
 
-#### Insertion
-
-The `insert(value)` method allows for insertion into the tree. Duplicate entries are silently ignored.
+#### bulkInsert(values)
+Inserts multiple values into the tree.  
+`values`: an array of values to insert.  
+Returns a promise that resolves to an array of objects containing the value and error that were **_not_** inserted or an empty array if all values were inserted.  
 ```js
-let memberAccount = new MemberAccount(42, 'Arthur', 'Dent');
+let bbtree = require('bbtree');
+let tree = bbtree.createTree();
 
-tree.insert(memberAccount);
+tree.bulkInsert([1, 2, 3, 4, 5])
+  .then(rejected => {
+    // rejected is an empty array
+  })
+  .catch(err => {
+    // do something with the error
+  });
+
+tree = bbtree.createTree();
+tree.bulkInsert([5, 6, 6, null, 7])
+  .then(rejected => {
+    // rejected is an array that contains
+    // [{value: 6, error: BbTreeError}, {value: null, error: BbTreeError}]
+    // as 5 is already in the tree and null is an invalid value.
+  })
+  .catch(err => {
+    // do something with the error
+  });
+
 ```
+#### count()
+Returns a promise that resolves to the number of values contained in the tree.
+```js
+tree.count()
+  .then(numberOfValues => {
+    // do something with numberOfValues
+  });
+```
+#### find(matcher(value))
+Finds zero or more values.  
+`matcher`: a function that accepts a value and returns `true` or `false` to indicate whether the value is included in the results.  
+Returns a promise that resolves to an array of values that match the matcher function or an empty array if no matches are found.
+```js
+let bbtree = require('bbtree');
 
-#### Retrieval
+let comparer = (a, b) => {
+  return a.accountNumber - b.accountNumber;
+};
 
-The `get(key)` method retrieves the value based on the key provided or null if no match is found.  
+let tree = bbtree.createTree(comparer);
 
+tree.insert({ accountNumber: 1, firstName: 'Fred', lastName: 'Flintstone' })
+  .then(tree => { return tree.insert({ accountNumber: 2, firstName: 'Wilma', lastName: 'Flintstone' })})
+  .then(tree => { return tree.insert({ accountNumber: 3, firstName: 'Barney', lastName: 'Rubble' })})
+  .then(tree => {
+    let lastName = 'Flintstone';
+    let matcher = (member) => { return member.lastName === lastName; };
+    return tree.find(matcher); // returns Fred and Wilma
+  })
+  .then(results => {
+    // results is [ { accountNumber: 1, firstName: 'Fred', lastName: 'Flintstone' },
+    //              { accountNumber: 2, firstName: 'Wilma', lastName: 'Flintstone' } ]
+  });
+```
+#### get(key)
+Retrieves a value from the tree.  
+`key`: the key used to match the value.  
+Returns a promise that resolves to the value found or rejects if no match is found. Only the first value found is returned.
 ```js
 let bbtree = require('bbtree');
 
@@ -67,15 +120,22 @@ let comparer = (a, b) => {
 let tree = bbtree.createTree(comparer);
 
 let memberAccount = { accountNumber: 42, firstName: 'Arthur', lastName: 'Dent' };
-tree.insert(memberAccount);
-
-let key = { accountNumber: 42 };
-
-let account = tree.get(key);
+tree.insert(memberAccount)
+  .then(tree => {
+    let key = { accountNumber: 42 };
+    return tree.get(key);
+  })
+  .then(value => {
+    // value is { accountNumber: 42, firstName: 'Arthur', lastName: 'Dent' }
+  })
+  .catch(err => {
+    // no match found
+  });;
 ```
-
-The `find(matcher(value))` method returns an array of values that match the matcher function or an empty array if no matches are found.
-
+#### insert(value)
+Inserts a value into the tree.  
+`value`: the value to insert.  
+Returns a promise that resolves to the tree if the insert is successful or rejects if the value is invalid or already contained in the tree.
 ```js
 let bbtree = require('bbtree');
 
@@ -84,24 +144,19 @@ let comparer = (a, b) => {
 };
 
 let tree = bbtree.createTree(comparer);
+let memberAccount = new MemberAccount(42, 'Arthur', 'Dent');
 
-tree.insert({ accountNumber: 1, firstName: 'Fred', lastName: 'Flintstone' });
-tree.insert({ accountNumber: 2, firstName: 'Wilma', lastName: 'Flintstone' });
-tree.insert({ accountNumber: 3, firstName: 'Barney', lastName: 'Rubble' });
-
-let lastName = 'Flintstone';
-let matcher = (member) => { return member.lastName === lastName; };
-let results = tree.find(matcher); // returns Fred and Wilma
-
-lastName = 'Rubble';
-results = tree.find(matcher); // returns Barney
+tree.insert(memberAccount)
+  .then(tree => {
+    // do something with the tree
+  })
+  .catch(err => {
+    // insert was not successful
+  });
 ```
 
-The `count()` method returns the number of values contained in the tree.
 
-```js
-let numberOfValues = tree.count();
-```
+
 #### Removal
 
 The `remove(key)` method removes the value from the tree.
